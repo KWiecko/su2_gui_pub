@@ -1,0 +1,9 @@
+chunk_sep_rgx: &chunk_sep_rgx "---"
+chunk_sep_spacer: &chunk_sep_spacer "-"
+cmnt_sign: &cmnt_sign "%"
+chunk_name_ptrn: "\n% ---{} {} {}--- %\n"
+#chunk_name_ptrn: !Join ["\n", *cmnt_sign, *chunk_sep_rgx, "{}", " {} ", "{}", *chunk_sep_rgx, *cmnt_sign, "\n"]
+
+param_setting_ptrn: &param_setting_ptrn "{}= {}\n"
+pre_param_cmt_ptrn: "%\n% {}\n"
+#pre_param_cmt_ptrn: &pre_param_cmt_ptrn !Join [*cmnt_sign, "\n", *cmnt_sign, " {} \n"]

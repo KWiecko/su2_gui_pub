@@ -1,0 +1,295 @@
+cfx5:
+  #  Element Type	Identifier
+  #  Tetrahedral	  4
+  #  Hexahedral	      8
+  #  Prism	          6
+  #  Pyramid	      5
+
+  license_line_idx: 0
+  version_line_idx: 1
+  el_counts_line_idx: 2
+  elements_def:
+    4:
+      el_name: tetra
+      wall_count: 4
+      node_count: 4
+      walls_def:
+#        oriented outsied element
+#        2: [1, 2, 4, 1]
+#        3: [2, 3, 4, 2]
+#        4: [3, 1, 4, 3]
+#        1: [1, 3, 2, 1]
+
+#       fix
+        2: [1, 4, 2, 1]
+        3: [2, 4, 3, 2]
+        4: [3, 4, 1, 3]
+        1: [1, 2, 3, 1]
+
+#        2: [1, 3, 4, 1]
+#        3: [2, 1, 4, 2]
+#        4: [3, 2, 4, 3]
+#        1: [1, 2, 3, 1]
+
+    6:
+      el_name: penta
+      wall_count: 5
+      node_count: 6
+      walls_def:
+#        oriented outside element
+#        1: [1, 2, 5, 4, 1]
+#        2: [2, 3, 6, 5, 2]
+#        3: [3, 1, 4, 6, 3]
+#        4: [1, 3, 2, 1]
+#        5: [4, 5, 6, 4]
+
+#       fix
+        1: [1, 4, 5, 2, 1]
+        2: [2, 5, 6, 3, 2]
+        3: [3, 6, 4, 1, 3]
+        4: [1, 2, 3, 1]
+        5: [4, 6, 5, 4]
+
+#        1: [1, 3, 6, 4, 1]
+#        2: [2, 1, 4, 5, 2]
+#        3: [3, 2, 5, 6, 3]
+#        4: [1, 2, 3, 1]
+#        5: [4, 6, 5, 4]
+
+
+    8:
+      el_name: hexa
+      wall_count: 6
+      node_count: 8
+      walls_def:
+#        oriented outside element
+#        1: [1, 2, 6, 5, 1]
+#        2: [2, 3, 7, 6, 2]
+#        3: [3, 4, 8, 7, 3]
+#        4: [4, 1, 5, 8, 4]
+#        5: [1, 2, 3, 4, 1]
+#        6: [5, 6, 7 ,8, 5]
+
+# TODO check this point order - in vtk it's different
+#       fix ?
+        1: [1, 5, 6, 2, 1]
+        2: [2, 6, 7, 3, 2]
+        3: [3, 7, 8, 4, 3]
+        4: [4, 8, 5, 1, 4]
+        5: [1, 2, 3, 4, 1]
+        6: [5, 8, 7 ,6, 5]
+
+    5:
+      el_name: pyra
+      wall_count: 5
+      node_count: 5
+      walls_def:
+#        oriented outside element
+#        2: [1, 2, 5, 1]
+#        3: [2, 3, 5, 2]
+#        4: [3, 4, 5, 3]
+#        5: [4, 1, 5, 4]
+#        1: [1, 4, 3, 2, 1]
+
+#       fix
+        2: [1, 5, 2, 1]
+        3: [2, 5, 3, 2]
+        4: [3, 5, 4, 3]
+        5: [4, 5, 1, 4]
+        1: [1, 2, 3, 4, 1]
+
+#        2: [1, 4, 5, 1]
+#        3: [2, 1, 5, 2]
+#        4: [3, 2, 5, 3]
+#        5: [4, 3, 5, 4]
+#        1: [1, 2, 3, 4, 1]
+su2:
+  ndim_def:
+    line_idx: 0
+    line_pttrn: 'NDIME= {}'
+
+  aoa_offset_def:
+    line_idx : 1
+    line_pttrn: 'AOA_OFFSET= {}'
+
+  aos_offset_def:
+    line_idx: 2
+    line_pttrn: 'AOS_OFFSET= {}'
+
+  all_elements_count_def:
+    line_idx:
+    line_pttrn: 'NELEM= {}'
+
+  points_count_def:
+    line_idx:
+    line_pttrn: 'NPOIN= {}'
+
+  markers_def:
+    line_idx:
+    line_pttrn: 'NMARK= {}'
+
+  markers_count_def:
+    line_idx:
+    line_pttrn: 'MARKER_ELEMS= {}'
+    # MARKER_ELEMS= 17284
+
+  markers_name_def:
+    line_idx:
+    line_pttrn: 'MARKER_TAG= {}'
+    # MARKER_TAG= LOWER_SIDE
+
+
+  #  Element Type	Identifier
+  #  Line	          3
+  #  Triangle	      5
+  #  Quadrilateral  9
+  #  Tetrahedral	  10
+  #  Hexahedral	  12
+  #  Prism	      13
+  #  Pyramid	      14
+
+  element_name_type_map:
+    tri: 5
+    quad: 9
+    tetra: 10
+    hexa: 12
+    penta: 13
+    pyra: 14
+#    5: tri
+#    9: quad
+#    10: tetra
+#    13: penta
+#    12: hexa
+#    14: pyra
+
+  5:
+    el_name: tri
+    wall_count: 1
+    node_count: 3
+    walls_def:
+#      1: [1, 3, 2, 1]
+      1: [1, 2, 3, 1]
+
+  9:
+    el_name: quad
+    wall_count: 1
+    node_count: 4
+    walls_def:
+#      1: [1, 4, 3, 2, 1]
+      1: [1, 2, 3, 4, 1]
+
+  10:
+    el_name: tetra
+    wall_count: 4
+    node_count: 4
+    walls_def:
+#      facing outside
+#      2: [1, 2, 4, 1]
+#      3: [2, 3, 4, 2]
+#      4: [3, 1, 4, 3]
+#      1: [1, 2, 3, 1]
+
+#       fix
+      2: [1, 4, 2, 1]
+      3: [2, 4, 3, 2]
+      4: [3, 4, 1, 3]
+      1: [1, 2, 3, 1]
+
+
+#      2: [1, 2, 4, 1]
+#      3: [2, 3, 4, 2]
+#      4: [3, 1, 4, 3]
+#      1: [1, 3, 2, 1]
+
+  13:
+    el_name: penta
+    wall_count: 5
+    node_count: 6
+    walls_def:
+#      facing outside
+#      1: [1, 2, 5, 4, 1]
+#      2: [2, 3, 6, 5, 2]
+#      3: [3, 1, 4, 6, 3]
+#      4: [1, 2, 3, 1]
+#      5: [4, 5, 6, 4]
+
+#       fix
+#      1: [1, 4, 5, 2, 1]
+#      2: [2, 5, 6, 3, 2]
+#      3: [3, 6, 4, 1, 3]
+#      4: [1, 2, 3, 1]
+#      5: [4, 6, 5, 4]
+#       SU2 reordered element
+      1: [1, 4, 6, 3, 1]
+      2: [3, 6, 5, 2, 3]
+      3: [2, 5, 4, 1, 2]
+      4: [1, 3, 2, 1]
+      5: [4, 5, 6, 4]
+
+#      5: [1, 4, 5, 2, 1]
+#      4: [2, 5, 6, 3, 2]
+#      3: [3, 6, 4, 1, 3]
+#      1: [1, 2, 3, 1]
+#      2: [4, 6, 5, 4]
+
+
+#      1: [1, 2, 5, 4, 1]
+#      2: [2, 3, 6, 5, 2]
+#      3: [3, 1, 4, 6, 3]
+#      4: [1, 3, 2, 1]
+#      5: [4, 5, 6, 4]
+
+  12:
+    el_name: hexa
+    wall_count: 6
+    node_count: 8
+    walls_def:
+#      facing outside
+#      1: [1, 2, 6, 5, 1]
+#      2: [2, 3, 7, 6, 2]
+#      3: [3, 4, 8, 7, 3]
+#      4: [4, 1, 5, 8, 4]
+#      5: [1, 2, 3, 4, 1]
+#      6: [5, 6, 7 ,8, 5]
+
+# TODO check this point order - in vtk it's different
+#       fix ?
+      1: [1, 5, 6, 2, 1]
+      2: [2, 6, 7, 3, 2]
+      3: [3, 7, 8, 4, 3]
+      4: [4, 8, 5, 1, 4]
+      5: [1, 2, 3, 4, 1]
+      6: [5, 8, 7 ,6, 5]
+
+#      1: [1, 5, 6, 2, 1]
+#      2: [2, 6, 7, 3, 2]
+#      3: [3, 7, 8, 4, 3]
+#      4: [4, 8, 5, 1, 4]
+#      5: [1, 4, 3, 2, 1]
+#      6: [5, 8, 7 ,6, 5]
+
+  14:
+    el_name: pyra
+    wall_count: 5
+    node_count: 5
+    walls_def:
+#      facing outside
+#      2: [1, 2, 5, 1]
+#      3: [2, 3, 5, 2]
+#      4: [3, 4, 5, 3]
+#      5: [4, 1, 5, 4]
+#      1: [1, 2, 3, 4, 1]
+
+#       fix
+      2: [1, 5, 2, 1]
+      3: [2, 5, 3, 2]
+      4: [3, 5, 4, 3]
+      5: [4, 5, 1, 4]
+      1: [1, 2, 3, 4, 1]
+
+#      2: [1, 2, 5, 1]
+#      3: [2, 3, 5, 2]
+#      4: [3, 4, 5, 3]
+#      5: [4, 1, 5, 4]
+#      1: [1, 4, 3, 2, 1]
+

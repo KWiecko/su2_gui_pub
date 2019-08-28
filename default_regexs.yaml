@@ -1,0 +1,11 @@
+yes_no_allowed_vals: '(\(|\s)(YES|NO)(,|,\s|\/)(YES|NO)(\)|\s)'
+# yes_no_allowed_vals: '(\\(|\\s)(YES|NO)(,|,\\s|\\/)(YES|NO)(\\)|\\s)'
+
+common_allowed_vals: '(\(|\s)((([0-9]{0,2}[A-Z]{1,}[0-9]{0,})(\_|\-|\+){0,1}){1,}(,\s|\s|\sor\s|$){0,1}){1,}(\)|\s|$)'
+bad_allowed_vals_rm_rgx: '(\(|\s|,\s|,){}(\)|\s|,\s|,)'
+parenths_rgx: '\(.*\)'
+
+# '(FFD_SETTING, FFD_CONTROL_POINT_2D, FFD_CAMBER_2D, FFD_THICKNESS_2D, HICKS_HENNE,
+#  COSINE_BUMP, PARABOLIC, NACA_4DIGITS, DISPLACEMENT,
+#  ROTATION, FFD_CONTROL_POINT, FFD_DIHEDRAL_ANGLE, FFD_TWIST_ANGLE, FFD_ROTATION,
+#  FFD_CAMBER, FFD_THICKNESS, FFD_CONTROL_SURFACE, SURFACE_FILE, AIRFOIL)'

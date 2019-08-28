@@ -1,0 +1,24 @@
+FREE_FORM_DEFORMATION_PARAMETERS:
+  FFD_TOLERANCE:
+    allowed values: {}
+    tooltip: Tolerance of the Free-Form Deformation point inversion
+    value: 1e-10
+  FFD_ITERATIONS:
+    allowed values: {}
+    tooltip: Maximum number of iterations in the Free-Form Deformation point inversion
+    value: 500
+  FFD_DEFINITION:
+    allowed values: {}
+    tooltip: "FFD box definition: 3D case (FFD_BoxTag, X1, Y1, Z1, X2, Y2, Z2,
+              X3, Y3, Z3, X4, Y4, Z4, X5, Y5, Z5, X6, Y6, Z6, X7, Y7, Z7, X8,
+              Y8, Z8) 2D case (FFD_BoxTag, X1, Y1, 0.0, X2, Y2, 0.0, X3, Y3,
+              0.0, X4, Y4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+              0.0, 0.0, 0.0)"
+    value:
+  FFD_DEGREE:
+    allowed values: {}
+    tooltip: "FFD box degree: 3D case (x_degree, y_degree, z_degree) 2D case
+              (x_degree, y_degree, 0)"
+    value: "(10, 8, 1)"
+OPTIMAL_SHAPE_DESIGN_DEFINITION:
+  DEFINITION_DV:

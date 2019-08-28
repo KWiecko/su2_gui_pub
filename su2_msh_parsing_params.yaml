@@ -1,0 +1,13 @@
+msh_fname_tab_key: INPUT_OUTPUT_INFORMATION
+msh_fname_param_key: MESH_FILENAME
+param_ctrl_key: control
+
+msh_srfs_loader_butt_target_tab: BOUNDARY_CONDITION_DEFINITION
+
+srf_name_rgx: MARKER_TAG
+srf_name_asgn_spltr: "="
+srf_el_count_rgx: MARKER_ELEMS
+
+#msh_pth_section_key: INPUT_OUTPUT_INFORMATION
+#msh_pth_param_key: MESH_FILENAME
+
