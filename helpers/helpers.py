@@ -873,3 +873,21 @@ def break_input_str_on_len(
             curr_line_len = 0
 
     return line_w_nls
+
+
+def get_gen(obj_to_gen: Iterable):
+    """
+    Getter for generator for any provided iterable
+    Parameters
+    ----------
+    obj_to_gen: Iterable
+        object to be turned into generator
+
+    Yields
+    -------
+    object
+        object by object stored in the provided collection
+
+    """
+    for el in obj_to_gen:
+        yield el

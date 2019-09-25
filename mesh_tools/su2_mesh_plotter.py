@@ -1,16 +1,21 @@
+import dask.array as da
+import gc
 import itertools
 # import keyboard
 from mayavi import mlab
 import numpy as np
+import pandas as pd
 from pynput.keyboard import Key, Controller
 from pynput import keyboard
 # import pygame
 import re
 from tvtk.api import tvtk
 import os
+from warnings import warn
 
+# from helpers.dask_utils import DaskFileReader
 from helpers.helpers import read_all_lines, prcs_collection_w_np, \
-    subset_points_using_surf
+    subset_points_using_surf, get_gen
 from helpers.mesh_helpers import find_entries_range_and_count, \
     get_all_boundaries_info, add_mayavi_point, remove_last_mayavi_point
 
@@ -39,10 +44,23 @@ class SU2MeshSurfPlotter:
 
     @property
     def all_su2_msh_lines(self) -> np.array:
+        # check for dask read file
+        # if not self.dask_file_rader:
+        #     raise ValueError('DaskFileReader has not been initiated for this '
+        #                      'object yet -> can fetch all_su2_mesh_lines')
+        # if len(self.dask_file_rader.all_lines) == 0:
+        #     raise ValueError('The are no lines read -> check reading procedure')
+        # # return DaskFileReader created generator
+        # return self.dask_file_rader.get_lines_generator()
         return self._all_su2_msh_lines
 
     @all_su2_msh_lines.setter
     def all_su2_msh_lines(self, new_val: np.array):
+        # warn('Since this code is using Dask to read files the setting of '
+        #      '`all_su2_msh_lines` is no longer allowed. To access all lines of '
+        #      'the read file please use the `all_lines` param of the '
+        #      'dask_file_reader attr')
+        # pass
         self._all_su2_msh_lines = new_val
 
     @property
@@ -69,19 +87,69 @@ class SU2MeshSurfPlotter:
     def allwd_colours(self, new_val: list):
         self._allwd_colours = new_val
 
-    def __init__(self, pth_to_msh: str, ignored_surfs_rgx: str = '^FF|^SYMM'):
+    # @property
+    # def dask_file_rader(self) -> DaskFileReader:
+    #     return self._dask_file_reader
+    #
+    # @dask_file_rader.setter
+    # def dask_file_rader(self, new_val: DaskFileReader):
+    #     self._dask_file_reader = new_val
+
+    @property
+    def cache_limit(self) -> int:
+        return self._cache_limit
+
+    @cache_limit.setter
+    def cache_limit(self, new_val: int):
+        self._cache_limit = new_val
+
+    def __init__(
+            self, pth_to_msh: str, ignored_surfs_rgx: str = '^FF|^SYMM',
+            cache_limit: int = 50000):
+        """
+        Init w params
+        Parameters
+        ----------
+        pth_to_msh: str
+            path to plotted mesh
+        ignored_surfs_rgx: str
+            regex for surfaces to skip when plotting
+        cache_limit: int
+            chunk size limit when reading file
+        """
         self.pth_to_msh = pth_to_msh
         self.all_bounds = {}
         self.ignored_surfs_rgx = ignored_surfs_rgx
+        self.cache_limit = cache_limit
+        # self._set_dask_file_reader()
         self.set_allwd_colours()
 
+    # def _set_dask_file_reader(self):
+    #     """
+    #     Setter method for dask file reader
+    #     Returns
+    #     -------
+    #
+    #     """
+    #     self.dask_file_rader = DaskFileReader(pth_to_file=self.pth_to_msh)
+
     def read_su2_msh(self):
-        with open(self.pth_to_msh, 'r') as su2_msh_f:
-            # self.all_su2_msh_lines = read_all_lines(su2_msh_f)
-            self.all_su2_msh_lines = np.array(su2_msh_f.readlines())
-            # print(len(self.all_su2_msh_lines))
-            # print(self.all_su2_msh_lines[0])
-            # print(self.all_su2_msh_lines[-1])
+        """
+        Wrapper around dask file reader to read mesh files efficiently
+        (low mem reading)
+        Returns
+        -------
+
+        """
+        # ########
+        # read with pandas
+        # ########
+
+        read_f = pd.read_csv(self.pth_to_msh, header=None)
+        read_arr = read_f[read_f.columns[0]].values
+        read_f = None
+        gc.collect()
+        self.all_su2_msh_lines = read_arr
 
     @staticmethod
     def get_point_np_arr_frm_str(point_str: str):
@@ -106,9 +174,25 @@ class SU2MeshSurfPlotter:
             find_entries_range_and_count(
                 self.all_su2_msh_lines, entries_marker='^NPOIN=')
 
+        # first_pts_line_idx, last_pts_line_idx, all_pts_count = \
+        #     self.all_su2_msh_lines.map_blocks(find_entries_range_and_count)
+
+        # self.dask_file_rader.all_lines.map_blocks(
+        #     find_entries_range_and_count, **{'entries_marker': '^NPOIN='})\
+        #     .compute()
+
+        # da.apply_along_axis(
+        #     find_entries_range_and_count, self.all_su2_msh_lines,
+        #     **{'entries_marker': '^NPOIN='}).compute()
+
+            # find_entries_range_and_count(
+            #     self.all_su2_msh_lines, entries_marker='^NPOIN=')
+
+        print('PTS RANGE FOUND')
         all_pts_subst = \
             self.all_su2_msh_lines[first_pts_line_idx:last_pts_line_idx + 1]
 
+        print('WRITING ENTRIES TO NUMPY W CACHE')
         all_np_pts = \
             prcs_collection_w_np(
                 input_collection=all_pts_subst,
@@ -120,12 +204,15 @@ class SU2MeshSurfPlotter:
     def set_all_boundaries(self):
         print('SETTING ALL BOUNDS')
         all_bounds = get_all_boundaries_info(self.all_su2_msh_lines)
+        print('ALL BOUNDS INFO EXTRACTED')
 
         no_ids_pts = np.array([el[:-1] for el in self.all_msh_points_np])
+        print('SET POINTS WITH NO IDS')
 
         prcsd_bounds = {}
 
         for bound_name, bound_info in all_bounds.items():
+            print('PROCESSING BOUND: {}'.format(bound_name))
 
             bound_strt_ixd = bound_info['bound_start_line_idx']
             bound_end_ixd = bound_info['bound_end_line_idx']
@@ -149,12 +236,14 @@ class SU2MeshSurfPlotter:
 
                 all_bound_nodes.append(el_wall_nodes_ids)
 
+            print('SUBSETTING POINTS USING SURF')
             curr_bound_points, bound_walls = subset_points_using_surf(
                 all_pts=no_ids_pts, nodes_per_walls=all_bound_nodes)
 
             els_mayavi_def = []
             offsets = []
 
+            print('APPENDIGN BOUND WALLS')
             for bound_wall in bound_walls:
                 offsets.append(len(els_mayavi_def))
 
@@ -558,19 +647,18 @@ if __name__ == '__main__':
     # print(os.getcwd())
     pth_to_msh = 'su2_bench.su2'
     # pth_to_msh = 'project1.su2'
-    # pth_to_msh = 'su2_bench_fxd_orient.su2'
-    pth_to_msh = 'su2_bench_fxd_orient.su2'
-    pth_to_msh = 'jet_cat_su2_test.su2'
     print(os.getcwd())
+    # input('dir_check')
     pth_to_def_msh = '../../su2_tuts/adj_mesh_comp/ffd_su2_bench_deform.su2'
     # keyboard = Controller
 
     su2_mp = SU2MeshSurfPlotter(pth_to_msh=pth_to_msh,
                                 ignored_surfs_rgx='^FF|^SYMM')
     su2_mp.read_su2_msh()
+    # input('sanity_check')
     su2_mp.set_all_points()
     su2_mp.set_all_boundaries()
-    su2_mp.plot_all_boundaries(plot_points=False)
+    su2_mp.plot_all_boundaries(plot_points=True, dist_fact=0.1)
     # mlab.title('FFD box selection widget - please remember that points need to '
     #            'be picked in the same order as in hexa element', height=0.1)
 
